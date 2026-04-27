@@ -1,19 +1,20 @@
 package com.example.deploy6.controller;
 
 import com.example.deploy6.model.User;
+import com.example.deploy6.repository.UserRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import java.util.ArrayList;
-import java.util.List;
-
 @Controller
 public class UserController {
 
-    private List<User> userList = new ArrayList<>();
+    // Kita memanggil jembatan ke database di sini
+    @Autowired
+    private UserRepository userRepository;
 
     @GetMapping("/")
     public String index() {
@@ -36,7 +37,8 @@ public class UserController {
 
     @GetMapping("/home")
     public String homePage(Model model) {
-        model.addAttribute("users", userList);
+        // Mengambil seluruh data mahasiswa langsung dari database
+        model.addAttribute("users", userRepository.findAll());
         return "home";
     }
 
@@ -47,7 +49,8 @@ public class UserController {
 
     @PostMapping("/form")
     public String submitForm(User user) {
-        userList.add(user);
+        // Menyimpan data yang diisi dari form ke dalam database
+        userRepository.save(user);
         return "redirect:/home";
     }
 }
